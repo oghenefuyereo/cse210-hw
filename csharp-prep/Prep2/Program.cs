@@ -4,73 +4,53 @@ class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("🌟 Welcome to the Grade Evaluator 5000! 🚀");
-        Console.Write("What is your grade percentage? ");
-        string answer = Console.ReadLine();
+        bool playAgain = true;
 
-        if (int.TryParse(answer, out int percent))
+        while (playAgain)
         {
-            string letter = "";
-            string sign = "";
+            // For Part 3, where we use a random number
+            Random randomGenerator = new Random();
+            int magicNumber = randomGenerator.Next(1, 101);
 
-            if (percent >= 90)
+            int guess = -1;
+            int numberOfGuesses = 0;
+
+            Console.WriteLine("🔮 Welcome to the Guess My Number Game! 🔮");
+            Console.WriteLine("I've selected a magic number between 1 and 100. Try to guess it!");
+
+            while (guess != magicNumber)
             {
-                letter = "A";
+                Console.Write("What is your guess? ");
+                guess = int.Parse(Console.ReadLine());
+
+                if (magicNumber > guess)
+                {
+                    Console.WriteLine("Higher");
+                }
+                else if (magicNumber < guess)
+                {
+                    Console.WriteLine("Lower");
+                }
+                else
+                {
+                    Console.WriteLine($"🎉 Congratulations! You guessed it in {numberOfGuesses} guesses!");
+                }
+
+                numberOfGuesses++;
             }
-            else if (percent >= 80)
+
+            Console.Write("Do you want to play again? (yes/no): ");
+            string playAgainInput = Console.ReadLine().ToLower();
+
+            if (playAgainInput != "yes")
             {
-                letter = "B";
-            }
-            else if (percent >= 70)
-            {
-                letter = "C";
-            }
-            else if (percent >= 60)
-            {
-                letter = "D";
+                playAgain = false;
+                Console.WriteLine("Thanks for playing! Come back soon!");
             }
             else
             {
-                letter = "F";
+                Console.Clear(); // Clear the console for a fresh start
             }
-
-            // Determine the sign
-            int lastDigit = percent % 10;
-            if (percent >= 60 && (lastDigit >= 7))
-            {
-                sign = "+";
-            }
-            else if (percent >= 60 && (lastDigit < 3))
-            {
-                sign = "-";
-            }
-
-            // Handle exceptional cases
-            if (letter == "A" && lastDigit >= 7)
-            {
-                letter = "A-";
-                sign = "";
-            }
-            else if (letter == "F" && (lastDigit >= 3 || lastDigit <= 0))
-            {
-                letter = "F";
-                sign = "";
-            }
-
-            Console.WriteLine($"🎓 Your grade is: {letter}{sign} 🌈");
-
-            if (percent >= 70)
-            {
-                Console.WriteLine("🎉 Congratulations! You've mastered the material! 🚀");
-            }
-            else
-            {
-                Console.WriteLine("😢 Oops! Don't worry, keep striving for success! 🌟");
-            }
-        }
-        else
-        {
-            Console.WriteLine("Invalid input! Please enter a valid percentage.");
         }
     }
 }
