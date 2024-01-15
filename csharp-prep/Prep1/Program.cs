@@ -6,5 +6,7 @@ class Program
     {
         Console.WriteLine("What is your first namefffvvvbvvbbvvvvbbbbbbff?");
         Console.WriteLine("What is your first namefffvvvbvvbbvvvvbbbbbbff?");
+        Console.WriteLine("What is your first namefffvvvbvvbbvvvvbbbbbbff?");
+        Console.WriteLine("What is your first namefffvvvbvvbbvvvvbbbbbbff?");
     }
 }
