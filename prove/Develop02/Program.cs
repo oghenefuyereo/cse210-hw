@@ -78,6 +78,15 @@ class Program
 {
     static void Main()
     {
+        Console.WriteLine(@"
+   ______ _           _   _             
+   |  ____(_)         | | (_)            
+   | |__   _ _ __ ___ | |_ _  __ _ ___  
+   |  __| | | '_ ` _ \| __| |/ _` / __| 
+   | |    | | | | | | | |_| | (_| \__ \ 
+   |_|    |_|_| |_| |_|\__|_|\__,_|___/
+   ");
+
         Journal journal = new Journal();
         List<string> prompts = new List<string>
         {
@@ -92,56 +101,85 @@ class Program
 
         while (true)
         {
-            Console.WriteLine("1. Write a new entry");
-            Console.WriteLine("2. Display the journal");
-            Console.WriteLine("3. Save the journal to a file");
-            Console.WriteLine("4. Load the journal from a file");
-            Console.WriteLine("5. Exit");
+            Console.WriteLine("1. 📝 Write a new entry");
+            Console.WriteLine("2. 📖 Display the journal");
+            Console.WriteLine("3. 💾 Save the journal to a file");
+            Console.WriteLine("4. 📂 Load the journal from a file");
+            Console.WriteLine("5. 🚪 Exit");
 
-            int choice = int.Parse(Console.ReadLine());
+            int choice;
+            if (!int.TryParse(Console.ReadLine(), out choice))
+            {
+                Console.WriteLine("Invalid input. Please enter a valid number.");
+                continue;
+            }
 
             switch (choice)
             {
                 case 1:
                     JournalEntry newEntry = new JournalEntry
                     {
-                        Prompt = prompts[random.Next(prompts.Count)],
-                        Date = DateTime.Now.ToString("yyyy-MM-dd"),
+                        Prompt = GenerateRandomPrompt(),
+                        Date = GetCurrentDate(),
                     };
 
-                    Console.WriteLine($"Prompt: {newEntry.Prompt}");
-                    Console.Write("Response: ");
+                    Console.WriteLine($"🌟 Prompt: {newEntry.Prompt}");
+                    Console.Write("💬 Response: ");
                     newEntry.Response = Console.ReadLine();
 
                     journal.AddEntry(newEntry);
                     break;
 
                 case 2:
+                    Console.ForegroundColor = ConsoleColor.Green;
                     journal.DisplayEntries();
+                    Console.ForegroundColor = ConsoleColor.White;
                     break;
 
                 case 3:
-                    Console.Write("Enter filename to save: ");
+                    Console.Write("💾 Enter filename to save: ");
                     string saveFileName = Console.ReadLine();
                     journal.SaveToFile(saveFileName);
-                    Console.WriteLine("Journal saved successfully.");
+                    Console.WriteLine("✨ Journal saved successfully.");
                     break;
 
                 case 4:
-                    Console.Write("Enter filename to load: ");
+                    Console.Write("📂 Enter filename to load: ");
                     string loadFileName = Console.ReadLine();
                     journal.LoadFromFile(loadFileName);
-                    Console.WriteLine("Journal loaded successfully.");
+                    Console.WriteLine("🔍 Journal loaded successfully.");
                     break;
 
                 case 5:
+                    Console.WriteLine("👋 Exiting the journal application. Goodbye!");
                     Environment.Exit(0);
                     break;
 
                 default:
-                    Console.WriteLine("Invalid choice. Please try again.");
+                    Console.WriteLine("❌ Invalid choice. Please try again.");
                     break;
             }
         }
+    }
+
+    private static string GenerateRandomPrompt()
+    {
+        // Implement your creative prompt generation logic here
+        // For example, you can create a list of creative prompts and randomly select one
+        List<string> creativePrompts = new List<string>
+        {
+            "If you could time-travel to any historical event, which one would it be?",
+            "Describe your day using only emojis.",
+            "Write a letter to your future self.",
+            "If you were a superhero, what would be your superpower and costume?",
+            "What fictional world would you like to live in for a day?"
+        };
+
+        return creativePrompts[new Random().Next(creativePrompts.Count)];
+    }
+
+    private static string GetCurrentDate()
+    {
+        return DateTime.Now.ToString("yyyy-MM-dd");
     }
 }
