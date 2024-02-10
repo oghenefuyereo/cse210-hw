@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-// Base class for all activities
 class Activity
 {
     protected int duration;
@@ -12,14 +11,12 @@ class Activity
         this.duration = duration;
     }
 
-    // Common starting message for all activities
     public virtual void Start()
     {
         Console.WriteLine("Starting activity...");
         Thread.Sleep(2000); // Pause for 2 seconds
     }
 
-    // Common ending message for all activities
     public virtual void End()
     {
         Console.WriteLine("Great job! You have completed the activity.");
@@ -28,7 +25,6 @@ class Activity
     }
 }
 
-// Breathing Activity class inheriting from Activity
 class BreathingActivity : Activity
 {
     public BreathingActivity(int duration) : base(duration)
@@ -38,30 +34,26 @@ class BreathingActivity : Activity
     public override void Start()
     {
         Console.WriteLine("Breathing Activity:");
-        Console.WriteLine("This activity will help you relax by walking you through breathing in and out slowly. Clear your mind and focus on your breathing.");
+        Console.WriteLine("This activity will help you relax by guiding you through breathing in and out slowly. Clear your mind and focus on your breath.");
         base.Start();
     }
 
     public override void End()
     {
+        Console.WriteLine("End of Breathing Activity");
         base.End();
     }
 
-    // Additional animation for breathing activity
-    public void PerformBreathing()
+    public void PerformBreathing(int cycleDuration)
     {
-        Console.WriteLine("Starting breathing exercise...");
-        for (int i = 0; i < duration; i++)
-        {
-            Console.WriteLine("Breathe in...");
-            Thread.Sleep(1000); // Pause for 1 second
-            Console.WriteLine("Breathe out...");
-            Thread.Sleep(1000); // Pause for 1 second
-        }
+        Console.WriteLine("Starting breathing exercise...\n");
+        Console.WriteLine("        Breathe in         ");
+        Thread.Sleep(cycleDuration * 1000); // Pause for the duration
+        Console.WriteLine("        Breathe out        ");
+        Thread.Sleep(cycleDuration * 1000); // Pause for the duration
     }
 }
 
-// Reflection Activity class inheriting from Activity
 class ReflectionActivity : Activity
 {
     private List<string> prompts = new List<string> {
@@ -69,7 +61,6 @@ class ReflectionActivity : Activity
         "Think of a time when you did something really difficult.",
         "Think of a time when you helped someone in need.",
         "Think of a time when you did something truly selfless.",
-        // Additional reflection prompts
         "Think of a time when you overcame a fear.",
         "Think of a time when you learned a valuable lesson."
     };
@@ -93,16 +84,16 @@ class ReflectionActivity : Activity
     public override void Start()
     {
         Console.WriteLine("Reflection Activity:");
-        Console.WriteLine("This activity will help you reflect on times in your life when you have shown strength and resilience. This will help you recognize the power you have and how you can use it in other aspects of your life.");
+        Console.WriteLine("This activity will help you reflect on times in your life when you have shown strength and resilience. Recognize the power you have and how you can use it in other aspects of your life.");
         base.Start();
     }
 
     public override void End()
     {
+        Console.WriteLine("End of Reflection Activity");
         base.End();
     }
 
-    // Additional animation for reflection activity
     public void Reflect()
     {
         Random rand = new Random();
@@ -117,14 +108,13 @@ class ReflectionActivity : Activity
     }
 }
 
-// Listing Activity class inheriting from Activity
 class ListingActivity : Activity
 {
     private List<string> prompts = new List<string> {
         "Who are people that you appreciate?",
         "What are personal strengths of yours?",
         "Who are people that you have helped this week?",
-        "When have you felt the Holy Ghost this month?",
+        "When have you felt inspired recently?",
         "Who are some of your personal heroes?"
     };
 
@@ -135,16 +125,16 @@ class ListingActivity : Activity
     public override void Start()
     {
         Console.WriteLine("Listing Activity:");
-        Console.WriteLine("This activity will help you reflect on the good things in your life by having you list as many things as you can in a certain area.");
+        Console.WriteLine("This activity will help you reflect on the good things in your life by listing positive aspects in a certain area.");
         base.Start();
     }
 
     public override void End()
     {
+        Console.WriteLine("End of Listing Activity");
         base.End();
     }
 
-    // Additional animation for listing activity
     public void ListItems()
     {
         Random rand = new Random();
@@ -173,14 +163,13 @@ class Program
 {
     static void Main(string[] args)
     {
-        // Main menu
+        Console.ForegroundColor = ConsoleColor.Cyan;
         Console.WriteLine("Welcome to the Mindfulness Program!");
         Console.WriteLine("Choose an activity:");
         Console.WriteLine("1. Breathing Activity");
         Console.WriteLine("2. Reflection Activity");
         Console.WriteLine("3. Listing Activity");
 
-        // Get user choice
         int choice;
         do
         {
@@ -193,13 +182,18 @@ class Program
             Console.Write("Enter duration of activity in seconds: ");
         } while (!int.TryParse(Console.ReadLine(), out duration) || duration <= 0);
 
-        // Execute selected activity
         switch (choice)
         {
             case 1:
                 BreathingActivity breathingActivity = new BreathingActivity(duration);
                 breathingActivity.Start();
-                breathingActivity.PerformBreathing();
+                Console.WriteLine("Enter duration of each breathing cycle in seconds:");
+                int cycleDuration;
+                while (!int.TryParse(Console.ReadLine(), out cycleDuration) || cycleDuration <= 0)
+                {
+                    Console.WriteLine("Please enter a valid duration for each cycle.");
+                }
+                breathingActivity.PerformBreathing(cycleDuration);
                 breathingActivity.End();
                 break;
             case 2:
