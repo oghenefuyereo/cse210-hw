@@ -38,6 +38,11 @@ class SimpleGoal : Goal
 // Derived class for eternal goals
 class EternalGoal : Goal
 {
+    public override void MarkComplete()
+    {
+        throw new InvalidOperationException("Eternal goals cannot be marked as completed.");
+    }
+
     public override int CalculatePoints()
     {
         return IsCompleted ? 100 : 0;
@@ -73,6 +78,7 @@ class ChecklistGoal : Goal
 class GoalManager
 {
     private List<Goal> goals = new List<Goal>();
+    private int totalScore = 0;
 
     // Method to add a new goal
     public void AddGoal(Goal newGoal)
@@ -110,7 +116,7 @@ class GoalManager
     // Method to calculate total score
     private int CalculateTotalScore()
     {
-        int totalScore = 0;
+        totalScore = 0;
         foreach (var goal in goals)
         {
             totalScore += goal.CalculatePoints();
@@ -127,18 +133,20 @@ class GoalManager
             {
                 if (goal is SimpleGoal)
                 {
-                    outputFile.WriteLine($"{goal.Name},{goal.IsCompleted},1,{((SimpleGoal)goal).Points}");
+                    outputFile.WriteLine($"Simple,{goal.Name},{goal.IsCompleted},{((SimpleGoal)goal).Points}");
                 }
                 else if (goal is EternalGoal)
                 {
-                    outputFile.WriteLine($"{goal.Name},{goal.IsCompleted},2");
+                    outputFile.WriteLine($"Eternal,{goal.Name},{goal.IsCompleted}");
                 }
                 else if (goal is ChecklistGoal)
                 {
-                    outputFile.WriteLine($"{goal.Name},{goal.IsCompleted},3,{((ChecklistGoal)goal).TotalTimes},{((ChecklistGoal)goal).CompletedTimes}");
+                    outputFile.WriteLine($"Checklist,{goal.Name},{goal.IsCompleted},{((ChecklistGoal)goal).TotalTimes},{((ChecklistGoal)goal).CompletedTimes}");
                 }
             }
+            outputFile.WriteLine($"TotalScore,{totalScore}");
         }
+        Console.WriteLine("Goals saved successfully!");
     }
 
     // Method to load goals from a file
@@ -150,32 +158,30 @@ class GoalManager
             foreach (var line in lines)
             {
                 string[] parts = line.Split(',');
-                string name = parts[0];
-                bool isCompleted = bool.Parse(parts[1]);
-                int type = int.Parse(parts[2]);
-
-                Goal goal;
-                switch (type)
+                if (parts[0] == "Simple")
                 {
-                    case 1:
-                        int points = int.Parse(parts[3]);
-                        goal = new SimpleGoal { Name = name, IsCompleted = isCompleted, Points = points };
-                        break;
-                    case 2:
-                        goal = new EternalGoal { Name = name, IsCompleted = isCompleted };
-                        break;
-                    case 3:
-                        int totalTimes = int.Parse(parts[3]);
-                        int completedTimes = int.Parse(parts[4]);
-                        goal = new ChecklistGoal { Name = name, IsCompleted = isCompleted, TotalTimes = totalTimes, CompletedTimes = completedTimes };
-                        break;
-                    default:
-                        Console.WriteLine("Invalid goal type in file!");
-                        continue;
+                    int points = int.Parse(parts[3]);
+                    var simpleGoal = new SimpleGoal { Name = parts[1], IsCompleted = bool.Parse(parts[2]), Points = points };
+                    goals.Add(simpleGoal);
                 }
-
-                goals.Add(goal);
+                else if (parts[0] == "Eternal")
+                {
+                    var eternalGoal = new EternalGoal { Name = parts[1], IsCompleted = bool.Parse(parts[2]) };
+                    goals.Add(eternalGoal);
+                }
+                else if (parts[0] == "Checklist")
+                {
+                    int totalTimes = int.Parse(parts[3]);
+                    int completedTimes = int.Parse(parts[4]);
+                    var checklistGoal = new ChecklistGoal { Name = parts[1], IsCompleted = bool.Parse(parts[2]), TotalTimes = totalTimes, CompletedTimes = completedTimes };
+                    goals.Add(checklistGoal);
+                }
+                else if (parts[0] == "TotalScore")
+                {
+                    totalScore = int.Parse(parts[1]);
+                }
             }
+            Console.WriteLine("Goals loaded successfully!");
         }
     }
 }
@@ -210,52 +216,4 @@ class Program
                     MarkGoalComplete(goalManager);
                     break;
                 case "4":
-                    goalManager.SaveGoals("goals.txt");
-                    running = false;
-                    break;
-                default:
-                    Console.WriteLine("Invalid option! Please try again.");
-                    break;
-            }
-        }
-    }
-
-    static void AddGoal(GoalManager goalManager)
-    {
-        Console.Write("Enter goal name: ");
-        string name = Console.ReadLine();
-        Console.Write("Select goal type (1. Simple, 2. Eternal, 3. Checklist): ");
-        string typeInput = Console.ReadLine();
-        int type = int.Parse(typeInput);
-
-        Goal newGoal;
-        switch (type)
-        {
-            case 1:
-                Console.Write("Enter points: ");
-                int points = int.Parse(Console.ReadLine());
-                newGoal = new SimpleGoal { Name = name, Points = points };
-                break;
-            case 2:
-                newGoal = new EternalGoal { Name = name };
-                break;
-            case 3:
-                Console.Write("Enter total times: ");
-                int totalTimes = int.Parse(Console.ReadLine());
-                newGoal = new ChecklistGoal { Name = name, TotalTimes = totalTimes };
-                break;
-            default:
-                Console.WriteLine("Invalid goal type!");
-                return;
-        }
-
-        goalManager.AddGoal(newGoal);
-    }
-
-    static void MarkGoalComplete(GoalManager goalManager)
-    {
-        Console.Write("Enter the name of the goal to mark as complete: ");
-        string name = Console.ReadLine();
-        goalManager.MarkGoalComplete(name);
-    }
-}
+                    goalManager.SaveGoals
