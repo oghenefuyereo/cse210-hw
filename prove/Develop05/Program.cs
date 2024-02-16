@@ -216,4 +216,43 @@ class Program
                     MarkGoalComplete(goalManager);
                     break;
                 case "4":
-                    goalManager.SaveGoals
+                    goalManager.SaveGoals("goals.txt");
+                    running = false;
+                    break;
+                default:
+                    Console.WriteLine("Invalid option! Please try again.");
+                    break;
+            }
+        }
+    }
+
+    static void AddGoal(GoalManager goalManager)
+    {
+        Console.Write("Enter goal name: ");
+        string name = Console.ReadLine();
+        Console.Write("Select goal type (1. Simple, 2. Eternal, 3. Checklist): ");
+        string typeInput = Console.ReadLine();
+        int type = int.Parse(typeInput);
+
+        Goal newGoal;
+        switch (type)
+        {
+            case 1:
+                Console.Write("Enter points: ");
+                int points = int.Parse(Console.ReadLine());
+                newGoal = new SimpleGoal { Name = name, Points = points };
+                break;
+            case 2:
+                newGoal = new EternalGoal { Name = name };
+                break;
+            case 3:
+                Console.Write("Enter total times: ");
+                int totalTimes = int.Parse(Console.ReadLine());
+                newGoal = new ChecklistGoal { Name = name, TotalTimes = totalTimes };
+                break;
+            default:
+                Console.WriteLine("Invalid goal type!");
+                return;
+        }
+
+        goalManager.AddGoal(newGoal);
